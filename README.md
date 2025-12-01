@@ -1,155 +1,112 @@
-# 前言
+# 工业界大模型技术全栈记录
 
-回看读博期间研究的大模型技术，不得不说视野非常小。自从进入大厂基座模型组，深感工业界已经领先学术界一大截。开此贴记录工业界真实大模型训练和推理的方方面面，希望能够对在读的同学一些帮助，也是对自己学习知识的总结，帖子会不断更新。
+## 📖 简介
 
-- 同步Github：[https://github.com/monster119120/Industrial_LLM_tutorial](https://github.com/monster119120/Industrial_LLM_tutorial)，感兴趣的小伙伴可以一起创作。
+回看读博期间研究的大模型技术，不得不说视野非常小。自从进入大厂基座模型组，深感工业界已经领先学术界一大截。本项目旨在记录工业界真实大模型训练和推理的方方面面，希望能够对在读的同学提供一些帮助，也是对自己学习知识的总结。
 
-- 同步知乎专栏：[大模型全栈记录](https://www.zhihu.com/column/c_1934673782448062552)
+本项目内容将持续更新，涵盖数据、训练、推理部署、评估以及应用等全栈技术。
 
-- 同步微信公众号：**大模型全栈开发**，欢迎关注。
+- **Github**: [Industrial_LLM_tutorial](https://github.com/monster119120/Industrial_LLM_tutorial) - 欢迎 Star 和 PR！
+- **知乎专栏**: [大模型全栈记录](https://www.zhihu.com/column/c_1934673782448062552)
+- **微信公众号**: **大模型全栈开发**
+- **个人经历**: [博士之路](https://www.zhihu.com/column/c_1934959737918697853)
+- **论文笔记**: [大模型论文阅读笔记](https://www.zhihu.com/column/c_1934673782448062552)
 
-- 个人经历：[博士之路](https://www.zhihu.com/column/c_1934959737918697853)，欢迎关注。
+---
 
-- 🔥大模型论文阅读笔记知乎专栏：[大模型论文阅读笔记](https://www.zhihu.com/column/c_1934673782448062552)
+## 📚 目录
 
-# 摘要
-
-工业界的大模型，涉及的部分主要有：**数据**、**训练**、**推理部署**、**大模型应用**四个方面。
+1. [大模型数据](#1-大模型数据)
+2. [大模型训练](#2-大模型训练)
+3. [大模型推理部署](#3-大模型推理部署)
+4. [大模型评估](#4-大模型评估)
+5. [大模型应用](#5-大模型应用)
 
 ---
 
 ## 1. 大模型数据
 
-- 原始数据爬取
-    - 网页
-        - 领域标签：历史、科技、医疗、生活、教育等各个领域，而且比例要均衡
-        - Title：网页标题
-        - Content：网页内容，把网页周边的导航栏、页脚版权信息、侧边栏广告、弹窗文案全部删掉
-        - 质量打分：人工或模型打分
-        - 权威站点标识：比如来自政府官网、维基百科、新华网等
-        - URL：网页地址
-        - 网页时间：网页发布时间
-    - 书籍
-    - 多语言
-    - 科学
-    - 代码
-    - 对话
-    - 新闻
-    - 等等
+数据是大模型的基石。本章节涵盖数据的获取、清洗、合成等流程。
 
-- 数据清洗
-    - 标准化格式
-    - 删除损毁数据，过滤长度太短的数据
-    - 全局去重
-        - 精确去重：行级/段落级精确匹配，文档级哈希值比对（LLaMA、Phi系列）
-        - 模糊去重：MinHash+LSH算法，n-gram相似度（Qwen、DeepSeek、Skywork）
-        - 跨数据集去重：统一哈希值比对，跨源全局相似性检测（LLaMA系列、Yi）
-    - 数据分类
-        - 基于规则分类
-            - 关键词
-            - 语种
-            - 行业领域分类
-        - 基于模型分类
-            - 训练分类模型，对每一条数据进行分类
-    - 行去重：去除高频行
-    - 打分：
-        - 基于规则的打分
-            - 正则表达式
-        - 基于模型的打分
-            - 训练质量模型，对每一条数据进行打分
-            - 通过PPL
+- **[数据下载](./1_data/download.md)**
+- **[数据预处理](./1_data/preprocess.md)**
+- **[数据去重](./1_data/deduplicate.md)**
+- **[DeepSeek CodeV2 Math 数据](./1_data/deepseek_codev2_math.md)**
 
-- 数据采样
-  - 不同domain数据源配比：专有领域vs通用领域，中文vs英文
-
-- 训练数据合成
-    - 短文预训练数据合成
-    - 短文SFT数据合成
-    - 短文RL数据合成
-    - 长文预训练数据合成
-    - 长文SFT数据合成
-    - 长文RL数据合成
+### 核心流程
+- **原始数据爬取**: 网页、书籍、代码、多语言数据等。
+- **数据清洗**: 格式标准化、去重（MinHash, LSH）、分类、打分。
+- **数据采样**: 不同领域数据的配比。
+- **数据合成**: 预训练、SFT、RL 数据的合成策略。
 
 ---
 
 ## 2. 大模型训练
 
-- 大模型训练——算法
-    - 长文
-        - [大模型长文训练（一）位置编码基础理论](https://zhuanlan.zhihu.com/p/1933621399240569735)
-        - [大模型长文训练（二）长度外推](https://zhuanlan.zhihu.com/p/1934347535641715830)
-        - [大模型长文训练（三）YaRN代码详解](https://zhuanlan.zhihu.com/p/1936060892698613119)
-    - MoE
-    - NSA (Native Sparse Attention)
-        - [五张图片看懂Native Sparse Attention（一）](https://zhuanlan.zhihu.com/p/1934668007730290968)
-    - Attention
-    - Scaling Law
-    - LoRA
-    - Post-training
-      - GRPO
+本章节深入探讨大模型训练的算法与基础设施。
 
-- 大模型训练——infra
-    - CP，TP，EP，SP，pipeline 等等
-    - SFT Packing
-    - Megatron
-        - [Megatron-LM（一）代码结构分析](https://zhuanlan.zhihu.com/p/1920265831364931803)
-        - [Megatron-LM（二）代码运行流程](https://zhuanlan.zhihu.com/p/1920451187829900784)
-        - [Megatron-LM（三）代码调试指南](https://zhuanlan.zhihu.com/p/1939364867074160363)
-    - Deepspeed
-    - Torchtiton
-    - FlashAttention 1/2/3
-        - [五张图片看懂Flash Attention v1（一）](https://zhuanlan.zhihu.com/p/1936750158621676144)
-        - [Flash Attention v2（一）](https://zhuanlan.zhihu.com/p/1936809531221972067)
-        - [Flash Attention v3（一）](https://zhuanlan.zhihu.com/p/1936809729683861528)
-    - Ring Attention
-        - [Ring Attention图解（一）](https://zhuanlan.zhihu.com/p/1938688830845728607)
-    - verl
-    - 算子优化
+### 算法 (Algorithm)
+- **[MoE (Mixture of Experts)](./2_training/algo/moe_algo.md)**
+- **[MoE 剪枝](./2_training/algo/moe_pruning.md)**
+- **[100B MoE 超参](./2_training/algo/100b_moe_hyper_param.md)**
+- **[Post-training](./2_training/algo/post_train.md)**
+- **[PPO](./2_training/algo/ppo.md)**
+- **[Reward Rule](./2_training/algo/reward_rule.md)**
+- **长文训练**:
+    - [位置编码基础理论](./2_training/algo/long_context/大模型长文训练（一）位置编码基础理论.md)
+    - [长度外推](./2_training/algo/long_context/大模型长文训练（二）长度外推.md)
+    - [YaRN代码详解](./2_training/algo/long_context/大模型长文训练（三）YaRN代码详解.md)
+- **Attention 变体**: NSA (Native Sparse Attention), Ring Attention。
+
+### 基础设施 (Infra)
+- **[Megatron-LM 详解](./2_training/infra/megatron_detail.md)**
+- **Megatron-LM 系列**:
+    - [代码结构分析](./2_training/infra/megatron/Megatron-LM（一）代码结构分析.md)
+    - [代码运行流程](./2_training/infra/megatron/Megatron-LM（二）代码运行流程.md)
+    - [代码调试指南](./2_training/infra/megatron/Megatron-LM（三）代码调试指南.md)
+- **并行策略**: CP, TP, EP, SP, Pipeline Parallelism。
+- **加速技术**:
+    - [Flash Attention v1](./2_training/infra/flash_attn/五张图片看懂Flash Attention v1（一）.md)
+    - [Flash Attention v2](./2_training/infra/flash_attn/Flash%20Attention%20v2（一）.md)
+    - [Flash Attention v3](./2_training/infra/flash_attn/Flash%20Attention%20v3（一）%20.md)
+    - Deepspeed, Torchtiton
 
 ---
 
 ## 3. 大模型推理部署
 
-- 大模型推理——算法
-    - KV cache 裁剪
-    - 裁剪
-    - 投机采样
-    - 量化
-    - RAG（Retrieval Augmented Generation）
+关注大模型的高效推理与服务化部署。
 
-- 大模型推理——infra
-    - PD分离
-    - Continues batching
-    - Paged Attention
-    - Cacheblend
-    - PrefixCaching
-    - Chunked prefill
-    - SGLang
-    - vLLM
+### 算法
+- KV Cache 裁剪
+- 投机采样 (Speculative Decoding)
+- 量化 (Quantization)
+- RAG (Retrieval Augmented Generation)
+
+### 基础设施
+- **[推理算法](./3_inference/algo/)**
+- **[推理架构](./3_inference/infra/)**
+- vLLM, SGLang
+- Continuous Batching, Paged Attention
 
 ---
 
 ## 4. 大模型评估
 
-- Pretrain评估
-- Posttrain评估
-
---- 
-
-
-## 5. 大模型应用
-
-- Agent
-- MCP
-- Deep Research
-- 工具调用
-- 摘要
-- 搜索Query改写
-- 搜索结果在线生成
+- **[评估概览](./4_evaluation/README.md)**
+- Pretrain 评估
+- Posttrain 评估
 
 ---
 
-> 本帖持续更新，欢迎关注交流！
+## 5. 大模型应用
+
+- **[应用概览](./5_application/README.md)**
+- Agent & MCP
+- Deep Research
+- 搜索增强
+
+---
 
 ## Star History
 
