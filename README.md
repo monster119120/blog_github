@@ -56,11 +56,12 @@
     - [位置编码基础理论](./2_training/algo/long_context/大模型长文训练（一）位置编码基础理论.md)
     - [长度外推](./2_training/algo/long_context/大模型长文训练（二）长度外推.md)
     - [YaRN代码详解](./2_training/algo/long_context/大模型长文训练（三）YaRN代码详解.md)
-- **Attention 变体**: NSA (Native Sparse Attention), Ring Attention。
+- **Attention 变体**: 
+    - [NSA (Native Sparse Attention)](./2_training/algo/nsa/Native_Sparse_Attention（一）图解.md)
 
 ### 基础设施 (Infra)
-- **[Megatron-LM 详解](./2_training/infra/megatron_detail.md)**
 - **Megatron-LM 系列**:
+    - [Megatron-LM 详解](./2_training/infra/megatron_detail.md)
     - [代码结构分析](./2_training/infra/megatron/Megatron-LM（一）代码结构分析.md)
     - [代码运行流程](./2_training/infra/megatron/Megatron-LM（二）代码运行流程.md)
     - [代码调试指南](./2_training/infra/megatron/Megatron-LM（三）代码调试指南.md)
@@ -69,6 +70,7 @@
     - [Flash Attention v1](./2_training/infra/flash_attn/五张图片看懂Flash Attention v1（一）.md)
     - [Flash Attention v2](./2_training/infra/flash_attn/Flash%20Attention%20v2（一）.md)
     - [Flash Attention v3](./2_training/infra/flash_attn/Flash%20Attention%20v3（一）%20.md)
+    - [Ring Attention](./2_training/infra/ring_attn/ring_attn（一）.md)
     - Deepspeed, Torchtiton
 
 ---
